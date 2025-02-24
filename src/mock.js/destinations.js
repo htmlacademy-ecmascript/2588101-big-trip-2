@@ -1,5 +1,5 @@
 
-const destinations = [
+const mockDestinations = [
   {
     id: '54d2f62a-6862-45f7-a1da-331713ec17ce',
     description: 'Saint Petersburg - full of of cozy canteens where you can try the best coffee in the Middle East',
@@ -173,4 +173,4 @@ const destinations = [
   }
 ];
 
-export {destinations};
+export {mockDestinations};
