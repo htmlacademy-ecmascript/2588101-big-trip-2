@@ -22,7 +22,7 @@ export default class TripPresenter {
     render(this.pointListElement, this.container);
     render(new EditFormView({point: this.points[0], offers: this.offers, destinations: this.destinations}), this.pointListElement.getElement());
 
-    for (let i = 0; i < this.boardPoints.length; i++) {
+    for (let i = 0; i < this.points.length; i++) {
       render(new RoutePointView({point: this.points[i], offers: this.offers, destinations: this.destinations}), this.pointListElement.getElement());
     }
   }
