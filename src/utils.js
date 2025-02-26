@@ -10,6 +10,8 @@ const DATE_FORMAT = 'MMM D';
 const DATE_TIME_FORMAT = 'DD/MM/YY HH:mm';
 const TIME_FORMAT = 'HH:mm';
 
+const firstLetterCap = (word) => `${word[0].toUpperCase()}${word.slice(1)}`;
+
 function getRandomArrayElement(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
@@ -36,4 +38,4 @@ function getTimeDifference(firstDate, secondDate) {
   return difference.format(format).replace(/\b00D 00H\b/, '').replace(/\b00D\b/, '');
 }
 
-export {getRandomArrayElement, humanizeDate, getTimeDifference, humanizeDateTime , humanizeTime};
+export {firstLetterCap, getRandomArrayElement, humanizeDate, getTimeDifference, humanizeDateTime , humanizeTime};
