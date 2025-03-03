@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {POINT_TYPES} from '../const.js';
 import {firstLetterCap, humanizeDateTime} from '../utils.js';
 
@@ -118,26 +118,15 @@ function createEditFormTemplate(point, offers, destinations) {
             </li>`);
 }
 
-export default class EditFormView {
+export default class EditFormView extends AbstractView {
   constructor({point, offers, destinations}) {
+    super();
     this.point = point;
     this.offers = offers;
     this.destinations = destinations;
   }
 
-  getTemplate() {
+  get template() {
     return createEditFormTemplate(this.point, this.offers, this.destinations);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

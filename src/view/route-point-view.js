@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeDate, getTimeDifference, humanizeTime} from '../utils.js';
 
 function createRoutePointTemplate(point, offers, destinations) {
@@ -56,26 +56,15 @@ function createRoutePointTemplate(point, offers, destinations) {
             </li>`);
 }
 
-export default class RoutePointView {
+export default class RoutePointView extends AbstractView {
   constructor({point, offers, destinations}) {
+    super();
     this.point = point;
     this.offers = offers;
     this.destinations = destinations;
   }
 
-  getTemplate() {
+  get template() {
     return createRoutePointTemplate(this.point, this.offers, this.destinations);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
