@@ -1,4 +1,3 @@
-
 import SortView from '../view/sort-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
@@ -27,10 +26,17 @@ export default class TripPresenter {
 
     render(new SortView(), this.#container);
     render(this.#pointListElement, this.#container);
-    render(new EditFormView({point: this.#routePoints[0], offers: this.#offers, destinations: this.#destinations}), this.#pointListElement.element);
 
     for (let i = 0; i < this.#routePoints.length; i++) {
-      render(new RoutePointView({point: this.#routePoints[i], offers: this.#offers, destinations: this.#destinations}), this.#pointListElement.element);
+      this.#renderRoutePoint(this.#routePoints[i], this.#offers, this.#destinations);
     }
+  }
+
+  #renderRoutePoint(point, offers, destinations) {
+    const pointElement = new RoutePointView({point, offers, destinations});
+    const editFormElement = new EditFormView({point, offers, destinations});
+
+    render(pointElement, this.#pointListElement.element);
+    render(editFormElement, this.#pointListElement.element);
   }
 }
