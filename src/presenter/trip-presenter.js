@@ -6,24 +6,31 @@ import RoutePointView from '../view/route-point-view.js';
 import {render} from '../framework/render.js';
 
 export default class TripPresenter {
-  pointListElement = new RoutePointListView();
+  #container = null;
+  #pointsModel = null;
+
+  #pointListElement = new RoutePointListView();
+
+  #routePoints = [];
+  #offers = [];
+  #destinations = [];
 
   constructor({container, pointsModel}) {
-    this.container = container;
-    this.pointsModel = pointsModel;
+    this.#container = container;
+    this.#pointsModel = pointsModel;
   }
 
   init() {
-    this.points = [...this.pointsModel.getPoints()];
-    this.offers = this.pointsModel.getOffers();
-    this.destinations = this.pointsModel.getDestinations();
+    this.#routePoints = [...this.#pointsModel.points];
+    this.#offers = [...this.#pointsModel.offers];
+    this.#destinations = [...this.#pointsModel.destinations];
 
-    render(new SortView(), this.container);
-    render(this.pointListElement, this.container);
-    render(new EditFormView({point: this.points[0], offers: this.offers, destinations: this.destinations}), this.pointListElement.element);
+    render(new SortView(), this.#container);
+    render(this.#pointListElement, this.#container);
+    render(new EditFormView({point: this.#routePoints[0], offers: this.#offers, destinations: this.#destinations}), this.#pointListElement.element);
 
-    for (let i = 0; i < this.points.length; i++) {
-      render(new RoutePointView({point: this.points[i], offers: this.offers, destinations: this.destinations}), this.pointListElement.element);
+    for (let i = 0; i < this.#routePoints.length; i++) {
+      render(new RoutePointView({point: this.#routePoints[i], offers: this.#offers, destinations: this.#destinations}), this.#pointListElement.element);
     }
   }
 }
