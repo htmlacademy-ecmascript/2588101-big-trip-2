@@ -10,12 +10,6 @@ const DATE_FORMAT = 'MMM D';
 const DATE_TIME_FORMAT = 'DD/MM/YY HH:mm';
 const TIME_FORMAT = 'HH:mm';
 
-const firstLetterCap = (word) => `${word[0].toUpperCase()}${word.slice(1)}`;
-
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
 function humanizeDate(date) {
   return date ? dayjs.utc(date).format(DATE_FORMAT) : '';
 }
@@ -38,4 +32,4 @@ function getTimeDifference(firstDate, secondDate) {
   return difference.format(format).replace(/\b00D 00H\b/, '').replace(/\b00D\b/, '');
 }
 
-export {firstLetterCap, getRandomArrayElement, humanizeDate, getTimeDifference, humanizeDateTime , humanizeTime};
+export {humanizeDate, getTimeDifference, humanizeDateTime , humanizeTime};
