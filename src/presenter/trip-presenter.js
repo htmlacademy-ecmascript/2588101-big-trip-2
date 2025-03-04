@@ -33,12 +33,22 @@ export default class TripPresenter {
   }
 
   #renderRoutePoint(point, offers, destinations) {
+
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceEditFormToRoutePoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    };
+
     const pointElement = new RoutePointView({
       point,
       offers,
       destinations,
       onUnrollBtnClick: () => {
         replaceRoutePointToEditForm();
+        document.addEventListener('keydown', escKeyDownHandler);
       }
     });
 
@@ -48,9 +58,11 @@ export default class TripPresenter {
       destinations,
       onRollupBtnClick: () => {
         replaceEditFormToRoutePoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
       },
       onFormSubmit: () => {
         replaceEditFormToRoutePoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
       }
     });
 
