@@ -24,12 +24,7 @@ export default class TripPresenter {
     this.#offers = [...this.#pointsModel.offers];
     this.#destinations = [...this.#pointsModel.destinations];
 
-    render(new SortView(), this.#container);
-    render(this.#pointListElement, this.#container);
-
-    for (let i = 0; i < this.#routePoints.length; i++) {
-      this.#renderRoutePoint(this.#routePoints[i], this.#offers, this.#destinations);
-    }
+    this.#renderTripBoard();
   }
 
   #renderRoutePoint(point, offers, destinations) {
@@ -76,5 +71,14 @@ export default class TripPresenter {
 
     render(pointElement, this.#pointListElement.element);
     render(editFormElement, this.#pointListElement.element);
+  }
+
+  #renderTripBoard() {
+    render(new SortView(), this.#container);
+    render(this.#pointListElement, this.#container);
+
+    for (let i = 0; i < this.#routePoints.length; i++) {
+      this.#renderRoutePoint(this.#routePoints[i], this.#offers, this.#destinations);
+    }
   }
 }
