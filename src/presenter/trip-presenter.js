@@ -2,7 +2,7 @@ import SortView from '../view/sort-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
 import RoutePointView from '../view/route-point-view.js';
-import {render} from '../framework/render.js';
+import {render, replace} from '../framework/render.js';
 
 export default class TripPresenter {
   #container = null;
@@ -33,8 +33,34 @@ export default class TripPresenter {
   }
 
   #renderRoutePoint(point, offers, destinations) {
-    const pointElement = new RoutePointView({point, offers, destinations});
-    const editFormElement = new EditFormView({point, offers, destinations});
+    const pointElement = new RoutePointView({
+      point,
+      offers,
+      destinations,
+      onUnrollBtnClick: () => {
+        replaceRoutePointToEditForm();
+      }
+    });
+
+    const editFormElement = new EditFormView({
+      point,
+      offers,
+      destinations,
+      onRollupBtnClick: () => {
+        replaceEditFormToRoutePoint();
+      },
+      onFormSubmit: () => {
+        replaceEditFormToRoutePoint();
+      }
+    });
+
+    function replaceRoutePointToEditForm() {
+      replace(editFormElement, pointElement);
+    }
+
+    function replaceEditFormToRoutePoint() {
+      replace(pointElement, editFormElement);
+    }
 
     render(pointElement, this.#pointListElement.element);
     render(editFormElement, this.#pointListElement.element);
