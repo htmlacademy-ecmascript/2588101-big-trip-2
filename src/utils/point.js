@@ -32,4 +32,16 @@ function getTimeDifference(firstDate, secondDate) {
   return difference.format(format).replace(/\b00D 00H\b/, '').replace(/\b00D\b/, '');
 }
 
-export {humanizeDate, getTimeDifference, humanizeDateTime , humanizeTime};
+function isEventInFuture(date) {
+  return date && dayjs.utc().isAfter(date, 'D');
+}
+
+function isEventInPresent(date) {
+  return date && dayjs.utc().isSame(date, 'D');
+}
+
+function isEventInPast(date) {
+  return date && dayjs.utc().isBefore(date, 'D');
+}
+
+export {humanizeDate, getTimeDifference, humanizeDateTime , humanizeTime, isEventInFuture, isEventInPresent, isEventInPast};
