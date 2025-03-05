@@ -71,7 +71,6 @@ export default class TripPresenter {
     }
 
     render(pointElement, this.#pointListElement.element);
-    render(editFormElement, this.#pointListElement.element);
   }
 
   #renderTripBoard() {
