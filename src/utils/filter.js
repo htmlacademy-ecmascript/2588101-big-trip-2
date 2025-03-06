@@ -1,11 +1,11 @@
 import {FilterTypes} from '../const.js';
-import {isEventInFuture, isEventInPresent, isEventInPast} from '../utils/point.js';
+import {isPointInFuture, isPointInPast, isPointSameOrAfter, isPointSameOrBefore} from '../utils/point.js';
 
 const filter = {
-  [FilterTypes.EVERYTHING]: (points) => points.filter((point) => point),
-  [FilterTypes.FUTURE]: (points) => points.filter((point) => isEventInFuture(point.pointDateFrom)),
-  [FilterTypes.PRESENT]: (points) => points.filter((point) => isEventInPresent(point.pointDateFrom)),
-  [FilterTypes.PAST]: (points) => points.filter((point) => isEventInPast(point.pointDateFrom)),
+  [FilterTypes.EVERYTHING]: (points) => points.slice(),
+  [FilterTypes.FUTURE]: (points) => points.filter((point) => isPointInFuture(point.poinTimeFrom)),
+  [FilterTypes.PRESENT]: (points) => points.filter((point) => isPointSameOrBefore(point.poinTimeFrom) && isPointSameOrAfter(point.pointTimeTo)),
+  [FilterTypes.PAST]: (points) => points.filter((point) => isPointInPast(point.pointTimeTo)),
 };
 
 export {filter};
