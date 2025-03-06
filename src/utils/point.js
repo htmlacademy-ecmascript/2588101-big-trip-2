@@ -1,20 +1,17 @@
 import dayjs from 'dayjs';
-
 import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
-
 import duration from 'dayjs/plugin/duration';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
+dayjs.extend(utc);
 dayjs.extend(duration);
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 const DATE_FORMAT = 'MMM D';
 const DATE_TIME_FORMAT = 'DD/MM/YY HH:mm';
 const TIME_FORMAT = 'HH:mm';
-
-const firstLetterCap = (word) => `${word[0].toUpperCase()}${word.slice(1)}`;
-
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
 
 function humanizeDate(date) {
   return date ? dayjs.utc(date).format(DATE_FORMAT) : '';
@@ -38,4 +35,20 @@ function getTimeDifference(firstDate, secondDate) {
   return difference.format(format).replace(/\b00D 00H\b/, '').replace(/\b00D\b/, '');
 }
 
-export {firstLetterCap, getRandomArrayElement, humanizeDate, getTimeDifference, humanizeDateTime , humanizeTime};
+function isPointInFuture(pointDate) {
+  return pointDate && dayjs.utc().isBefore(pointDate, 'D');
+}
+
+function isPointInPast(pointDate) {
+  return pointDate && dayjs.utc().isAfter(pointDate, 'D');
+}
+
+function isPointSameOrAfter(pointDate) {
+  return pointDate && dayjs().isSameOrAfter(pointDate, 'D');
+}
+
+function isPointSameOrBefore(pointDate) {
+  return pointDate && dayjs().isSameOrBefore(pointDate, 'D');
+}
+
+export {humanizeDate, getTimeDifference, humanizeDateTime , humanizeTime, isPointInFuture, isPointInPast, isPointSameOrAfter, isPointSameOrBefore};

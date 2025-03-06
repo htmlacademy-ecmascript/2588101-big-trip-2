@@ -1,6 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {POINT_TYPES} from '../const.js';
-import {firstLetterCap, humanizeDateTime} from '../utils.js';
+import {firstLetterCap} from '../utils/common.js';
+import {humanizeDateTime} from '../utils/point.js';
 
 function createDestinationListTemplate(destinations) {
   return (destinations.map((destination) => `<option value="${destination.name}"></option>`).join(''));

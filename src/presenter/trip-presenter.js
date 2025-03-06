@@ -2,6 +2,7 @@ import SortView from '../view/sort-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
 import RoutePointView from '../view/route-point-view.js';
+import NoRoutePointView from '../view/no-route-point-view.js';
 import {render, replace} from '../framework/render.js';
 
 export default class TripPresenter {
@@ -70,12 +71,16 @@ export default class TripPresenter {
     }
 
     render(pointElement, this.#pointListElement.element);
-    render(editFormElement, this.#pointListElement.element);
   }
 
   #renderTripBoard() {
     render(new SortView(), this.#container);
     render(this.#pointListElement, this.#container);
+
+    if (this.#routePoints.length === 0) {
+      render(new NoRoutePointView(), this.#pointListElement.element);
+      return;
+    }
 
     for (let i = 0; i < this.#routePoints.length; i++) {
       this.#renderRoutePoint(this.#routePoints[i], this.#offers, this.#destinations);
