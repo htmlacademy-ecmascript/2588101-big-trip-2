@@ -1,6 +1,6 @@
 import EditFormView from '../view/edit-form-view.js';
 import RoutePointView from '../view/route-point-view.js';
-import {render, replace} from '../framework/render.js';
+import {render, replace, remove} from '../framework/render.js';
 
 export default class RoutePointPresenter {
   #container = null;
@@ -19,6 +19,9 @@ export default class RoutePointPresenter {
     this.#offers = offers;
     this.#destinations = destinations;
 
+    const prevRoutePointElement = this.#routePointElement;
+    const prevEditFormElement = this.#editFormElement;
+
     this.#routePointElement = new RoutePointView({
       point: this.#point,
       offers: this.#offers,
@@ -34,7 +37,26 @@ export default class RoutePointPresenter {
       onFormSubmit: this.#formSubmitEvent,
     });
 
-    render(this.#routePointElement, this.#container);
+    if (prevRoutePointElement === null || prevEditFormElement === null) {
+      render(this.#routePointElement, this.#container);
+      return;
+    }
+
+    if (this.#container.contains(prevRoutePointElement.element)) {
+      replace(this.#routePointElement, prevRoutePointElement);
+    }
+
+    if (this.#container.contains(prevEditFormElement.element)) {
+      replace(this.#editFormElement, prevEditFormElement);
+    }
+
+    remove(prevRoutePointElement);
+    remove(prevEditFormElement);
+  }
+
+  destroy() {
+    remove(this.#routePointElement);
+    remove(this.#editFormElement);
   }
 
   #replaceRoutePointToEditForm() {
