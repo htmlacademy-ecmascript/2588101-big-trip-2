@@ -1,9 +1,8 @@
 import SortView from '../view/sort-view.js';
-import EditFormView from '../view/edit-form-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
-import RoutePointView from '../view/route-point-view.js';
 import NoRoutePointView from '../view/no-route-point-view.js';
-import {render, replace, RenderPosition} from '../framework/render.js';
+import RoutePointPresenter from './route-point-presenter.js';
+import {render, RenderPosition} from '../framework/render.js';
 
 export default class TripPresenter {
   #container = null;
@@ -34,49 +33,11 @@ export default class TripPresenter {
     render(this.#sortElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
   }
 
-  #renderRoutePoint(point, offers, destinations) {
-
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceEditFormToRoutePoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const routePointElement = new RoutePointView({
-      point,
-      offers,
-      destinations,
-      onUnrollBtnClick: () => {
-        replaceRoutePointToEditForm();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+  #renderRoutePoint(point) {
+    const routePointPresenter = new RoutePointPresenter({
+      container: this.#pointListElement.element,
     });
-
-    const editFormElement = new EditFormView({
-      point,
-      offers,
-      destinations,
-      onRollupBtnClick: () => {
-        replaceEditFormToRoutePoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-      onFormSubmit: () => {
-        replaceEditFormToRoutePoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    });
-
-    function replaceRoutePointToEditForm() {
-      replace(editFormElement, routePointElement);
-    }
-
-    function replaceEditFormToRoutePoint() {
-      replace(routePointElement, editFormElement);
-    }
-
-    render(routePointElement, this.#pointListElement.element);
+    routePointPresenter.init(point, this.#offers, this.#destinations);
   }
 
   #renderRoutePoints(from, to) {
