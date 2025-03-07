@@ -16,6 +16,8 @@ export default class TripPresenter {
   #offers = [];
   #destinations = [];
 
+  #routePointPresenters = new Map();
+
   constructor({container, pointsModel}) {
     this.#container = container;
     this.#pointsModel = pointsModel;
@@ -38,6 +40,7 @@ export default class TripPresenter {
       container: this.#pointListElement.element,
     });
     routePointPresenter.init(point, this.#offers, this.#destinations);
+    this.#routePointPresenters.set(point.id, routePointPresenter);
   }
 
   #renderRoutePoints(from, to) {
@@ -48,6 +51,11 @@ export default class TripPresenter {
 
   #renderNoRoutePoints() {
     render(this.#noRoutePointElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #clearRoutePointList() {
+    this.#routePointPresenters.forEach((presenter) => presenter.destroy());
+    this.#routePointPresenters.clear();
   }
 
   #renderTripBoard() {
