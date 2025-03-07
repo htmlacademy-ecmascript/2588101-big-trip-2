@@ -3,13 +3,15 @@ import EditFormView from '../view/edit-form-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
 import RoutePointView from '../view/route-point-view.js';
 import NoRoutePointView from '../view/no-route-point-view.js';
-import {render, replace} from '../framework/render.js';
+import {render, replace, RenderPosition} from '../framework/render.js';
 
 export default class TripPresenter {
   #container = null;
   #pointsModel = null;
 
   #pointListElement = new RoutePointListView();
+  #sortElement = new SortView();
+  #noRoutePointElement = new NoRoutePointView();
 
   #routePoints = [];
   #offers = [];
@@ -28,6 +30,10 @@ export default class TripPresenter {
     this.#renderTripBoard();
   }
 
+  #renderSort() {
+    render(this.#sortElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderRoutePoint(point, offers, destinations) {
 
     const escKeyDownHandler = (evt) => {
@@ -38,7 +44,7 @@ export default class TripPresenter {
       }
     };
 
-    const pointElement = new RoutePointView({
+    const routePointElement = new RoutePointView({
       point,
       offers,
       destinations,
@@ -63,27 +69,38 @@ export default class TripPresenter {
     });
 
     function replaceRoutePointToEditForm() {
-      replace(editFormElement, pointElement);
+      replace(editFormElement, routePointElement);
     }
 
     function replaceEditFormToRoutePoint() {
-      replace(pointElement, editFormElement);
+      replace(routePointElement, editFormElement);
     }
 
-    render(pointElement, this.#pointListElement.element);
+    render(routePointElement, this.#pointListElement.element);
+  }
+
+  #renderRoutePoints(from, to) {
+    this.#routePoints
+      .slice(from, to)
+      .forEach((routePoint) => this.#renderRoutePoint(routePoint));
+  }
+
+  #renderNoRoutePoints() {
+    render(this.#noRoutePointElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
   }
 
   #renderTripBoard() {
-    render(new SortView(), this.#container);
     render(this.#pointListElement, this.#container);
 
     if (this.#routePoints.length === 0) {
-      render(new NoRoutePointView(), this.#pointListElement.element);
+      this.#renderNoRoutePoints() ;
       return;
     }
 
     for (let i = 0; i < this.#routePoints.length; i++) {
       this.#renderRoutePoint(this.#routePoints[i], this.#offers, this.#destinations);
     }
+
+    this.#renderSort();
   }
 }
