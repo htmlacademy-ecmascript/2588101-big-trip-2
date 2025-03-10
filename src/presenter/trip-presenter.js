@@ -32,6 +32,10 @@ export default class TripPresenter {
     this.#renderTripBoard();
   }
 
+  #handleModeChange = () => {
+    this.#routePointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
   #handleRoutePointChange = (updatedPoint) => {
     this.#routePoints = updateItem(this.#routePoints, updatedPoint);
     this.#routePointPresenters.get(updatedPoint.id).init(updatedPoint);
@@ -44,7 +48,8 @@ export default class TripPresenter {
   #renderRoutePoint(point) {
     const routePointPresenter = new RoutePointPresenter({
       container: this.#pointListElement.element,
-      onDataChange: this.#handleRoutePointChange
+      onDataChange: this.#handleRoutePointChange,
+      onModeChange: this.#handleModeChange
     });
     routePointPresenter.init(point, this.#offers, this.#destinations);
     this.#routePointPresenters.set(point.id, routePointPresenter);
