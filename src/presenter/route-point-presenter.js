@@ -9,9 +9,11 @@ export default class RoutePointPresenter {
   #point = null;
   #offers = null;
   #destinations = null;
+  #handleDataChange = null;
 
-  constructor({container}) {
+  constructor({container, onDataChange}) {
     this.#container = container;
+    this.#handleDataChange = onDataChange;
   }
 
   init(point, offers, destinations) {
@@ -27,6 +29,7 @@ export default class RoutePointPresenter {
       offers: this.#offers,
       destinations: this.#destinations,
       onUnrollBtnClick: this.#unrollBtnClick,
+      onFavoriteClick: this.#handleFavoriteClick,
     });
 
     this.#editFormElement = new EditFormView({
@@ -34,7 +37,7 @@ export default class RoutePointPresenter {
       offers: this.#offers,
       destinations: this.#destinations,
       onRollupBtnClick: this.#rollupBtnClick,
-      onFormSubmit: this.#formSubmitEvent,
+      onFormSubmit: this.#handleFormSubmit,
     });
 
     if (prevRoutePointElement === null || prevEditFormElement === null) {
@@ -84,8 +87,12 @@ export default class RoutePointPresenter {
     this.#replaceEditFormToRoutePoint();
   };
 
-  #formSubmitEvent = () => {
-    this.#replaceEditFormToRoutePoint();
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
   };
 
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(point);
+    this.#replaceEditFormToRoutePoint();
+  };
 }

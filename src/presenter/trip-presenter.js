@@ -44,6 +44,7 @@ export default class TripPresenter {
   #renderRoutePoint(point) {
     const routePointPresenter = new RoutePointPresenter({
       container: this.#pointListElement.element,
+      onDataChange: this.#handleRoutePointChange
     });
     routePointPresenter.init(point, this.#offers, this.#destinations);
     this.#routePointPresenters.set(point.id, routePointPresenter);
