@@ -44,11 +44,11 @@ function isPointInPast(pointDate) {
 }
 
 function isPointSameOrAfter(pointDate) {
-  return pointDate && dayjs().isSameOrAfter(pointDate, 'D');
+  return pointDate && dayjs.utc().isSameOrAfter(pointDate, 'D');
 }
 
 function isPointSameOrBefore(pointDate) {
-  return pointDate && dayjs().isSameOrBefore(pointDate, 'D');
+  return pointDate && dayjs.utc().isSameOrBefore(pointDate, 'D');
 }
 
 export {humanizeDate, getTimeDifference, humanizeDateTime , humanizeTime, isPointInFuture, isPointInPast, isPointSameOrAfter, isPointSameOrBefore};

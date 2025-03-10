@@ -3,9 +3,9 @@ import {isPointInFuture, isPointInPast, isPointSameOrAfter, isPointSameOrBefore}
 
 const filter = {
   [FilterTypes.EVERYTHING]: (points) => points.slice(),
-  [FilterTypes.FUTURE]: (points) => points.filter((point) => isPointInFuture(point.poinTimeFrom)),
-  [FilterTypes.PRESENT]: (points) => points.filter((point) => isPointSameOrBefore(point.poinTimeFrom) && isPointSameOrAfter(point.pointTimeTo)),
-  [FilterTypes.PAST]: (points) => points.filter((point) => isPointInPast(point.pointTimeTo)),
+  [FilterTypes.FUTURE]: (points) => points.filter((point) => isPointInFuture(point.dateFrom)),
+  [FilterTypes.PRESENT]: (points) => points.filter((point) => isPointSameOrAfter(point.dateFrom) && isPointSameOrBefore(point.dateTo)),
+  [FilterTypes.PAST]: (points) => points.filter((point) => isPointInPast(point.dateTo)),
 };
 
 export {filter};
