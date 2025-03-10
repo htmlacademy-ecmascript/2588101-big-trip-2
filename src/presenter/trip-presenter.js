@@ -3,6 +3,7 @@ import RoutePointListView from '../view/route-point-list-view.js';
 import NoRoutePointView from '../view/no-route-point-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import {render, RenderPosition} from '../framework/render.js';
+import {updateItem} from '../utils/common.js';
 
 export default class TripPresenter {
   #container = null;
@@ -30,6 +31,11 @@ export default class TripPresenter {
 
     this.#renderTripBoard();
   }
+
+  #handleRoutePointChange = (updatedPoint) => {
+    this.#routePoints = updateItem(this.#routePoints, updatedPoint);
+    this.#routePointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
 
   #renderSort() {
     render(this.#sortElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
