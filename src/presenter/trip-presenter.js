@@ -8,15 +8,14 @@ import {updateItem} from '../utils/common.js';
 export default class TripPresenter {
   #container = null;
   #pointsModel = null;
-
-  #pointListElement = new RoutePointListView();
-  #sortElement = new SortView();
-  #noRoutePointElement = new NoRoutePointView();
+  #sortElement = null;
 
   #routePoints = [];
   #offers = [];
   #destinations = [];
 
+  #pointListElement = new RoutePointListView();
+  #noRoutePointElement = new NoRoutePointView();
   #routePointPresenters = new Map();
 
   constructor({container, pointsModel}) {
@@ -41,7 +40,15 @@ export default class TripPresenter {
     this.#routePointPresenters.get(updatedPoint.id).init(updatedPoint, this.#offers, this.#destinations);
   };
 
+  #handleSortTypeChange = () => {
+
+  };
+
   #renderSort() {
+    this.#sortElement = new SortView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+
     render(this.#sortElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
   }
 
