@@ -38,7 +38,7 @@ export default class TripPresenter {
 
   #handleRoutePointChange = (updatedPoint) => {
     this.#routePoints = updateItem(this.#routePoints, updatedPoint);
-    this.#routePointPresenters.get(updatedPoint.id).init(updatedPoint);
+    this.#routePointPresenters.get(updatedPoint.id).init(updatedPoint, this.#offers, this.#destinations);
   };
 
   #renderSort() {
@@ -53,12 +53,6 @@ export default class TripPresenter {
     });
     routePointPresenter.init(point, this.#offers, this.#destinations);
     this.#routePointPresenters.set(point.id, routePointPresenter);
-  }
-
-  #renderRoutePoints(from, to) {
-    this.#routePoints
-      .slice(from, to)
-      .forEach((routePoint) => this.#renderRoutePoint(routePoint));
   }
 
   #renderNoRoutePoints() {
