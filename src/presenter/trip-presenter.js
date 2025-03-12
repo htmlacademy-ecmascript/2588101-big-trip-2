@@ -4,6 +4,8 @@ import NoRoutePointView from '../view/no-route-point-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import {render, RenderPosition} from '../framework/render.js';
 import {updateItem} from '../utils/common.js';
+import {SortType} from '../const.js';
+import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/point.js';
 
 export default class TripPresenter {
   #container = null;
@@ -17,6 +19,7 @@ export default class TripPresenter {
   #pointListElement = new RoutePointListView();
   #noRoutePointElement = new NoRoutePointView();
   #routePointPresenters = new Map();
+  #currentSortType = SortType.DAY;
 
   constructor({container, pointsModel}) {
     this.#container = container;
@@ -40,8 +43,27 @@ export default class TripPresenter {
     this.#routePointPresenters.get(updatedPoint.id).init(updatedPoint, this.#offers, this.#destinations);
   };
 
-  #handleSortTypeChange = () => {
+  #sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.TIME:
+        this.#routePoints.sort(sortPointTime);
+        break;
+      case SortType.PRICE:
+        this.#routePoints.sort(sortPointPrice);
+        break;
+      default:
+        this.#routePoints.sort(sortPointDay);
+    }
 
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
   };
 
   #renderSort() {
