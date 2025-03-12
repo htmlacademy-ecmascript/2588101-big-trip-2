@@ -64,6 +64,8 @@ export default class TripPresenter {
     }
 
     this.#sortPoints(sortType);
+    this.#clearRoutePointList();
+    this.#renderTripBoard();
   };
 
   #renderSort() {
