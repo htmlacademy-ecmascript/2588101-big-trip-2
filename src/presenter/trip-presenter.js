@@ -30,9 +30,13 @@ export default class TripPresenter {
     this.#routePoints = [...this.#pointsModel.points];
     this.#offers = [...this.#pointsModel.offers];
     this.#destinations = [...this.#pointsModel.destinations];
+    this.#routePoints.sort(sortPointDay);
 
     this.#renderTripBoard();
+    this.#renderSort();
+    this.#sortElement.replaceDefaultSort();
   }
+
 
   #handleModeChange = () => {
     this.#routePointPresenters.forEach((presenter) => presenter.resetView());
@@ -106,7 +110,5 @@ export default class TripPresenter {
     for (let i = 0; i < this.#routePoints.length; i++) {
       this.#renderRoutePoint(this.#routePoints[i], this.#offers, this.#destinations);
     }
-
-    this.#renderSort();
   }
 }

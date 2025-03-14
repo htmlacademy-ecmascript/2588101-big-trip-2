@@ -60,7 +60,7 @@ function sortPointTime(timeA, timeB) {
 }
 
 function sortPointPrice(priceA, priceB) {
-  return priceA.basePrice - priceB.basePrice;
+  return priceB.basePrice - priceA.basePrice;
 }
 
 export {humanizeDate, getTimeDifference, humanizeDateTime , humanizeTime, isPointInFuture, isPointInPast,

@@ -47,4 +47,9 @@ export default class SortView extends AbstractView {
     evt.preventDefault();
     this.#handleSortTypeChange(evt.target.dataset.sortType);
   };
+
+  replaceDefaultSort() {
+    this.element.querySelector('.trip-sort__input:checked').checked = false;
+    this.element.querySelector('#sort-day').checked = true;
+  }
 }
