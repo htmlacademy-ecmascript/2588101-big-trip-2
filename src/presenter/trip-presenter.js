@@ -4,20 +4,22 @@ import NoRoutePointView from '../view/no-route-point-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import {render, RenderPosition} from '../framework/render.js';
 import {updateItem} from '../utils/common.js';
+import {SortType} from '../const.js';
+import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/point.js';
 
 export default class TripPresenter {
   #container = null;
   #pointsModel = null;
-
-  #pointListElement = new RoutePointListView();
-  #sortElement = new SortView();
-  #noRoutePointElement = new NoRoutePointView();
+  #sortElement = null;
 
   #routePoints = [];
   #offers = [];
   #destinations = [];
 
+  #pointListElement = new RoutePointListView();
+  #noRoutePointElement = new NoRoutePointView();
   #routePointPresenters = new Map();
+  #currentSortType = SortType.DAY;
 
   constructor({container, pointsModel}) {
     this.#container = container;
@@ -28,9 +30,13 @@ export default class TripPresenter {
     this.#routePoints = [...this.#pointsModel.points];
     this.#offers = [...this.#pointsModel.offers];
     this.#destinations = [...this.#pointsModel.destinations];
+    this.#routePoints.sort(sortPointDay);
 
     this.#renderTripBoard();
+    this.#renderSort();
+    this.#sortElement.replaceDefaultSort();
   }
+
 
   #handleModeChange = () => {
     this.#routePointPresenters.forEach((presenter) => presenter.resetView());
@@ -41,7 +47,36 @@ export default class TripPresenter {
     this.#routePointPresenters.get(updatedPoint.id).init(updatedPoint, this.#offers, this.#destinations);
   };
 
+  #sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.TIME:
+        this.#routePoints.sort(sortPointTime);
+        break;
+      case SortType.PRICE:
+        this.#routePoints.sort(sortPointPrice);
+        break;
+      default:
+        this.#routePoints.sort(sortPointDay);
+    }
+
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
+    this.#clearRoutePointList();
+    this.#renderTripBoard();
+  };
+
   #renderSort() {
+    this.#sortElement = new SortView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+
     render(this.#sortElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
   }
 
@@ -75,7 +110,5 @@ export default class TripPresenter {
     for (let i = 0; i < this.#routePoints.length; i++) {
       this.#renderRoutePoint(this.#routePoints[i], this.#offers, this.#destinations);
     }
-
-    this.#renderSort();
   }
 }
