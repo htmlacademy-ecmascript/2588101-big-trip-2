@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {POINT_TYPES} from '../const.js';
 import {firstLetterCap} from '../utils/common.js';
 import {humanizeDateTime} from '../utils/point.js';
@@ -119,7 +119,7 @@ function createEditFormTemplate(point, offers, destinations) {
             </li>`);
 }
 
-export default class EditFormView extends AbstractView {
+export default class EditFormView extends AbstractStatefulView {
   #point = null;
   #offers = null;
   #destinations = null;
@@ -128,7 +128,7 @@ export default class EditFormView extends AbstractView {
 
   constructor({point, offers, destinations, onRollupBtnClick, onFormSubmit}) {
     super();
-    this.#point = point;
+    this._setState(EditFormView.parsePointToState(point));
     this.#offers = offers;
     this.#destinations = destinations;
 
@@ -140,7 +140,7 @@ export default class EditFormView extends AbstractView {
   }
 
   get template() {
-    return createEditFormTemplate(this.#point, this.#offers, this.#destinations);
+    return createEditFormTemplate(this._state, this.#offers, this.#destinations);
   }
 
   #rollupBtnHandler = (evt) => {
@@ -150,6 +150,15 @@ export default class EditFormView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#point);
+    this.#handleFormSubmit(EditFormView.parseStateToPoint(this._state));
   };
+
+  static parsePointToState(point) {
+    return {...point};
+  }
+
+  static parseStateToPoint(state) {
+    const point = {...state};
+    return point;
+  }
 }
