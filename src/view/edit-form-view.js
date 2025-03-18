@@ -23,7 +23,7 @@ function createTypeOfferTemplate(point, offers) {
 
       return (`<div class="event__offer-selector">
          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${typeOffer.title}-1" type="checkbox"
-           name="event-offer-${typeOffer.title}" ${checkedOffers}>
+           name="offers" ${checkedOffers}>
              <label class="event__offer-label" for="event-offer-${typeOffer.title}-1">
                <span class="event__offer-title">${typeOffer.title}</span>
                   &plus;&euro;&nbsp;
@@ -137,6 +137,7 @@ export default class EditFormView extends AbstractStatefulView {
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupBtnHandler);
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeChangeHandler);
   }
 
   get template() {
@@ -151,6 +152,13 @@ export default class EditFormView extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(EditFormView.parseStateToPoint(this._state));
+  };
+
+  #pointTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      pointType: evt.target.value,
+    });
   };
 
   static parsePointToState(point) {
