@@ -23,7 +23,7 @@ function createTypeOfferTemplate(point, offers) {
 
       return (`<div class="event__offer-selector">
          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${typeOffer.title}-1" type="checkbox"
-           name="offers" ${checkedOffers}>
+           name="offers" value="${typeOffer.id}" ${checkedOffers}>
              <label class="event__offer-label" for="event-offer-${typeOffer.title}-1">
                <span class="event__offer-title">${typeOffer.title}</span>
                   &plus;&euro;&nbsp;
@@ -153,6 +153,7 @@ export default class EditFormView extends AbstractStatefulView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
+    this.element.querySelector('.event__details').addEventListener('change', this.#pointOffersHandler);
   }
 
   #rollupBtnHandler = (evt) => {
@@ -169,6 +170,7 @@ export default class EditFormView extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
+      offers: []
     });
   };
 
@@ -180,6 +182,15 @@ export default class EditFormView extends AbstractStatefulView {
     }
     this.updateElement({
       destination: newDestination.id,
+    });
+  };
+
+  #pointOffersHandler = (evt) => {
+    evt.preventDefault();
+    const checkedOffers = [...this.element.querySelectorAll('input[name="offers"]:checked')]
+      .map((offer) => offer.value);
+    this.updateElement({
+      offers: checkedOffers
     });
   };
 
