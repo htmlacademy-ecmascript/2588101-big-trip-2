@@ -2,6 +2,8 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {POINT_TYPES} from '../const.js';
 import {firstLetterCap} from '../utils/common.js';
 import {humanizeDateTime} from '../utils/point.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 function createDestinationListTemplate(destinations) {
   return (destinations.map((destination) => `<option value="${destination.name}"></option>`).join(''));
