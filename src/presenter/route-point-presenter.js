@@ -72,6 +72,7 @@ export default class RoutePointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#editFormElement.reset(this.#point);
       this.#replaceEditFormToRoutePoint();
     }
   }
@@ -92,6 +93,7 @@ export default class RoutePointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#editFormElement.reset(this.#point);
       this.#replaceEditFormToRoutePoint();
     }
   };
@@ -101,6 +103,7 @@ export default class RoutePointPresenter {
   };
 
   #rollupBtnClick = () => {
+    this.#editFormElement.reset(this.#point);
     this.#replaceEditFormToRoutePoint();
   };
 

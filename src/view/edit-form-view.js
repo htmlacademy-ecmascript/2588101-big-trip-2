@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {POINT_TYPES} from '../const.js';
 import {firstLetterCap} from '../utils/common.js';
 import {humanizeDateTime} from '../utils/point.js';
@@ -23,7 +23,7 @@ function createTypeOfferTemplate(point, offers) {
 
       return (`<div class="event__offer-selector">
          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${typeOffer.title}-1" type="checkbox"
-           name="event-offer-${typeOffer.title}" ${checkedOffers}>
+           name="offers" value="${typeOffer.id}" ${checkedOffers}>
              <label class="event__offer-label" for="event-offer-${typeOffer.title}-1">
                <span class="event__offer-title">${typeOffer.title}</span>
                   &plus;&euro;&nbsp;
@@ -119,7 +119,7 @@ function createEditFormTemplate(point, offers, destinations) {
             </li>`);
 }
 
-export default class EditFormView extends AbstractView {
+export default class EditFormView extends AbstractStatefulView {
   #point = null;
   #offers = null;
   #destinations = null;
@@ -128,19 +128,32 @@ export default class EditFormView extends AbstractView {
 
   constructor({point, offers, destinations, onRollupBtnClick, onFormSubmit}) {
     super();
-    this.#point = point;
+    this._setState(EditFormView.parsePointToState(point));
     this.#offers = offers;
     this.#destinations = destinations;
 
     this.#rollupBtnClick = onRollupBtnClick;
     this.#handleFormSubmit = onFormSubmit;
 
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupBtnHandler);
-    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this._restoreHandlers();
   }
 
   get template() {
-    return createEditFormTemplate(this.#point, this.#offers, this.#destinations);
+    return createEditFormTemplate(this._state, this.#offers, this.#destinations);
+  }
+
+  reset(point) {
+    this.updateElement(
+      EditFormView.parsePointToState(point),
+    );
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupBtnHandler);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
+    this.element.querySelector('.event__details').addEventListener('change', this.#pointOffersHandler);
   }
 
   #rollupBtnHandler = (evt) => {
@@ -150,6 +163,43 @@ export default class EditFormView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#point);
+    this.#handleFormSubmit(EditFormView.parseStateToPoint(this._state));
   };
+
+  #pointTypeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+      offers: []
+    });
+  };
+
+  #pointDestinationHandler = (evt) => {
+    evt.preventDefault();
+    const newDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
+    if (newDestination === undefined) {
+      return;
+    }
+    this.updateElement({
+      destination: newDestination.id,
+    });
+  };
+
+  #pointOffersHandler = (evt) => {
+    evt.preventDefault();
+    const checkedOffers = [...this.element.querySelectorAll('input[name="offers"]:checked')]
+      .map((offer) => offer.value);
+    this.updateElement({
+      offers: checkedOffers
+    });
+  };
+
+  static parsePointToState(point) {
+    return {...point};
+  }
+
+  static parseStateToPoint(state) {
+    const point = {...state};
+    return point;
+  }
 }
