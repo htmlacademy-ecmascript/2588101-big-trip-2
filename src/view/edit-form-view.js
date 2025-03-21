@@ -209,21 +209,23 @@ export default class EditFormView extends AbstractStatefulView {
     evt.preventDefault();
     const checkedOffers = [...this.element.querySelectorAll('input[name="offers"]:checked')]
       .map((offer) => offer.value);
-    this.updateElement({
+    this._setState({
       offers: checkedOffers
     });
   };
 
   #dateFromHandler = ([dateFrom]) => {
-    this.updateElement({
+    this._setState({
       dateFrom: dateFrom,
     });
+    this.#datepickerTo.set('minDate', dateFrom);
   };
 
   #dateToHandler = ([dateTo]) => {
-    this.updateElement({
+    this._setState({
       dateTo: dateTo,
     });
+    this.#datepickerFrom.set('maxDate', dateTo);
   };
 
   #setDatepicker() {
@@ -231,7 +233,9 @@ export default class EditFormView extends AbstractStatefulView {
     const commonConfig = {
       minuteIncrement: 1,
       enableTime: true,
-      dateFormat: 'd/m/y H:i',
+      altInput: true,
+      dateFormat: 'Z',
+      altFormat: 'd/m/y H:i',
       'time_24hr': true
     };
 
