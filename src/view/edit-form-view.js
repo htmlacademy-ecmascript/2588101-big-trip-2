@@ -172,6 +172,7 @@ export default class EditFormView extends AbstractStatefulView {
     this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
     this.element.querySelector('.event__details').addEventListener('change', this.#pointOffersHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#pointPriceHandler);
 
     this.#setDatepicker();
   }
@@ -211,6 +212,13 @@ export default class EditFormView extends AbstractStatefulView {
       .map((offer) => offer.value);
     this._setState({
       offers: checkedOffers
+    });
+  };
+
+  #pointPriceHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      basePrice: evt.target.value
     });
   };
 
