@@ -1,10 +1,8 @@
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import duration from 'dayjs/plugin/duration';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 
-dayjs.extend(utc);
 dayjs.extend(duration);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -14,15 +12,15 @@ const DATE_TIME_FORMAT = 'DD/MM/YY HH:mm';
 const TIME_FORMAT = 'HH:mm';
 
 function humanizeDate(date) {
-  return date ? dayjs.utc(date).format(DATE_FORMAT) : '';
+  return date ? dayjs(date).format(DATE_FORMAT) : '';
 }
 
 function humanizeTime(time) {
-  return time ? dayjs.utc(time).format(TIME_FORMAT) : '';
+  return time ? dayjs(time).format(TIME_FORMAT) : '';
 }
 
 function humanizeDateTime(dateTime) {
-  return dateTime ? dayjs.utc(dateTime).format(DATE_TIME_FORMAT) : '';
+  return dateTime ? dayjs(dateTime).format(DATE_TIME_FORMAT) : '';
 }
 
 function getTimeDifference(firstDate, secondDate) {
@@ -36,19 +34,19 @@ function getTimeDifference(firstDate, secondDate) {
 }
 
 function isPointInFuture(pointDate) {
-  return pointDate && dayjs.utc().isBefore(pointDate, 'D');
+  return pointDate && dayjs().isBefore(pointDate, 'D');
 }
 
 function isPointInPast(pointDate) {
-  return pointDate && dayjs.utc().isAfter(pointDate, 'D');
+  return pointDate && dayjs().isAfter(pointDate, 'D');
 }
 
 function isPointSameOrAfter(pointDate) {
-  return pointDate && dayjs.utc().isSameOrAfter(pointDate, 'D');
+  return pointDate && dayjs().isSameOrAfter(pointDate, 'D');
 }
 
 function isPointSameOrBefore(pointDate) {
-  return pointDate && dayjs.utc().isSameOrBefore(pointDate, 'D');
+  return pointDate && dayjs().isSameOrBefore(pointDate, 'D');
 }
 
 function sortPointDay(dayA, dayB) {

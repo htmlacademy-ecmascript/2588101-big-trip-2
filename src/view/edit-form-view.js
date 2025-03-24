@@ -2,6 +2,8 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {POINT_TYPES} from '../const.js';
 import {firstLetterCap} from '../utils/common.js';
 import {humanizeDateTime} from '../utils/point.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 function createDestinationListTemplate(destinations) {
   return (destinations.map((destination) => `<option value="${destination.name}"></option>`).join(''));
@@ -125,6 +127,8 @@ export default class EditFormView extends AbstractStatefulView {
   #destinations = null;
   #rollupBtnClick = null;
   #handleFormSubmit = null;
+  #datepickerFrom = null;
+  #datepickerTo = null;
 
   constructor({point, offers, destinations, onRollupBtnClick, onFormSubmit}) {
     super();
@@ -142,6 +146,20 @@ export default class EditFormView extends AbstractStatefulView {
     return createEditFormTemplate(this._state, this.#offers, this.#destinations);
   }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
+  }
+
   reset(point) {
     this.updateElement(
       EditFormView.parsePointToState(point),
@@ -154,6 +172,9 @@ export default class EditFormView extends AbstractStatefulView {
     this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
     this.element.querySelector('.event__details').addEventListener('change', this.#pointOffersHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#pointPriceHandler);
+
+    this.#setDatepicker();
   }
 
   #rollupBtnHandler = (evt) => {
@@ -189,10 +210,63 @@ export default class EditFormView extends AbstractStatefulView {
     evt.preventDefault();
     const checkedOffers = [...this.element.querySelectorAll('input[name="offers"]:checked')]
       .map((offer) => offer.value);
-    this.updateElement({
+    this._setState({
       offers: checkedOffers
     });
   };
+
+  #pointPriceHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      basePrice: evt.target.value
+    });
+  };
+
+  #dateFromHandler = ([dateFrom]) => {
+    this._setState({
+      dateFrom: dateFrom,
+    });
+    this.#datepickerTo.set('minDate', dateFrom);
+  };
+
+  #dateToHandler = ([dateTo]) => {
+    this._setState({
+      dateTo: dateTo,
+    });
+    this.#datepickerFrom.set('maxDate', dateTo);
+  };
+
+  #setDatepicker() {
+    const [dateFromElement, dateToElement] = this.element.querySelectorAll('.event__input--time');
+    const commonConfig = {
+      minuteIncrement: 1,
+      enableTime: true,
+      altInput: true,
+      dateFormat: 'Z',
+      altFormat: 'd/m/y H:i',
+      'time_24hr': true
+    };
+
+    this.#datepickerFrom = flatpickr(
+      dateFromElement,
+      {
+        ...commonConfig,
+        defaultDate: this._state.dateFrom,
+        onClose: this.#dateFromHandler,
+        maxDate: this._state.dateTo
+      }
+    );
+
+    this.#datepickerTo = flatpickr(
+      dateToElement,
+      {
+        ...commonConfig,
+        defaultDate: this._state.dateTo,
+        onClose: this.#dateToHandler,
+        minDate: this._state.dateFrom
+      }
+    );
+  }
 
   static parsePointToState(point) {
     return {...point};
