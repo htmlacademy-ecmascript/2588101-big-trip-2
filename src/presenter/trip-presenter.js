@@ -26,6 +26,10 @@ export default class TripPresenter {
     this.#pointsModel = pointsModel;
   }
 
+  get points() {
+    return this.#pointsModel.points;
+  }
+
   init() {
     this.#routePoints = [...this.#pointsModel.points];
     this.#offers = [...this.#pointsModel.offers];

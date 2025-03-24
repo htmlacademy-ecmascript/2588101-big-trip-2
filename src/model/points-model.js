@@ -1,9 +1,10 @@
+import Observable from '../framework/observable.js';
 import {mockDestinations} from '../mock/destinations.js';
 import {mockOffers} from '../mock/offers.js';
 import {getRandomPoints} from '../mock/points.js';
 import {POINT_COUNT} from '../const.js';
 
-export default class PointsModel {
+export default class PointsModel extends Observable {
   #points = Array.from({length: POINT_COUNT}, getRandomPoints);
   #offers = mockOffers;
   #destinations = mockDestinations;
