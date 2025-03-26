@@ -22,6 +22,8 @@ export default class TripPresenter {
   constructor({container, pointsModel}) {
     this.#container = container;
     this.#pointsModel = pointsModel;
+
+    this.#pointsModel.addObserver(this.#handleModeEvent);
   }
 
   get points() {
@@ -50,8 +52,20 @@ export default class TripPresenter {
     this.#routePointPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  #handleRoutePointChange = (updatedPoint) => {
-    this.#routePointPresenters.get(updatedPoint.id).init(updatedPoint, this.#offers, this.#destinations);
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  };
+
+  #handleModeEvent = (updateType, data) => {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -75,7 +89,7 @@ export default class TripPresenter {
   #renderRoutePoint(point) {
     const routePointPresenter = new RoutePointPresenter({
       container: this.#pointListElement.element,
-      onDataChange: this.#handleRoutePointChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
     routePointPresenter.init(point, this.#offers, this.#destinations);
