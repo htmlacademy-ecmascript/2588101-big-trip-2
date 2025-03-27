@@ -47,6 +47,7 @@ export default class RoutePointPresenter {
       destinations: this.#destinations,
       onRollupBtnClick: this.#rollupBtnClick,
       onFormSubmit: this.#handleFormSubmit,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (prevRoutePointElement === null || prevEditFormElement === null) {
@@ -123,5 +124,13 @@ export default class RoutePointPresenter {
       point,
     );
     this.#replaceEditFormToRoutePoint();
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 }

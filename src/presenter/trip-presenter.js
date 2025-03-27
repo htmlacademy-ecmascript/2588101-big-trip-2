@@ -119,7 +119,10 @@ export default class TripPresenter {
     this.#routePointPresenters.clear();
 
     remove(this.#sortElement);
-    remove(this.#noRoutePointElement);
+
+    if (this.#noRoutePointElement) {
+      remove(this.#noRoutePointElement);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
