@@ -2,7 +2,7 @@ import SortView from '../view/sort-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
 import NoRoutePointView from '../view/no-route-point-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
-import {render, RenderPosition} from '../framework/render.js';
+import {render, RenderPosition, remove} from '../framework/render.js';
 import {SortType, UserAction, UpdateType} from '../const.js';
 import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/point.js';
 
@@ -39,12 +39,7 @@ export default class TripPresenter {
   }
 
   init() {
-    this.#offers = [...this.#pointsModel.offers];
-    this.#destinations = [...this.#pointsModel.destinations];
-
     this.#renderTripBoard();
-    this.#renderSort();
-    this.#sortElement.replaceDefaultSort();
   }
 
 
@@ -72,8 +67,12 @@ export default class TripPresenter {
         this.#routePointPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
+        this.#clearTripBoard();
+        this.#renderTripBoard();
         break;
       case UpdateType.MAJOR:
+        this.#clearTripBoard({resetSortType: true});
+        this.#renderTripBoard();
         break;
     }
   };
@@ -84,12 +83,13 @@ export default class TripPresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearRoutePointList();
+    this.#clearTripBoard();
     this.#renderTripBoard();
   };
 
   #renderSort() {
     this.#sortElement = new SortView({
+      currentSortType: this.#currentSortType,
       onSortTypeChange: this.#handleSortTypeChange
     });
 
@@ -106,25 +106,40 @@ export default class TripPresenter {
     this.#routePointPresenters.set(point.id, routePointPresenter);
   }
 
-  #renderNoRoutePoints() {
-    render(this.#noRoutePointElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
+  #renderRoutePoints(points) {
+    points.forEach((point) => this.#renderRoutePoint(point));
   }
 
-  #clearRoutePointList() {
+  #renderNoRoutePoints() {
+    render(this.#noRoutePointElement, this.#container, RenderPosition.AFTERBEGIN);
+  }
+
+  #clearTripBoard({resetSortType = false} = {}) {
     this.#routePointPresenters.forEach((presenter) => presenter.destroy());
     this.#routePointPresenters.clear();
+
+    remove(this.#sortElement);
+    remove(this.#noRoutePointElement);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DAY;
+    }
   }
 
   #renderTripBoard() {
-    render(this.#pointListElement, this.#container);
+    this.#offers = this.#pointsModel.offers;
+    this.#destinations = this.#pointsModel.destinations;
 
-    if (this.points.length === 0) {
+    const points = this.points;
+    const pointCount = points.length;
+
+    if (pointCount === 0) {
       this.#renderNoRoutePoints() ;
       return;
     }
 
-    for (let i = 0; i < this.points.length; i++) {
-      this.#renderRoutePoint(this.points[i], this.#offers, this.#destinations);
-    }
+    this.#renderSort();
+    render(this.#pointListElement, this.#container);
+    this.#renderRoutePoints(points);
   }
 }
