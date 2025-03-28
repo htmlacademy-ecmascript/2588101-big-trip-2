@@ -14,7 +14,8 @@ const filterModel = new FilterModel();
 
 const tripPresenter = new TripPresenter({
   container: tripEventsContainer,
-  pointsModel
+  pointsModel,
+  filterModel
 });
 
 const filterPresenter = new FilterPresenter({

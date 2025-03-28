@@ -5,11 +5,13 @@ import RoutePointPresenter from './route-point-presenter.js';
 import {render, RenderPosition, remove} from '../framework/render.js';
 import {SortType, UserAction, UpdateType} from '../const.js';
 import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/point.js';
+import {filter} from '../utils/filter.js';
 
 export default class TripPresenter {
   #container = null;
   #pointsModel = null;
   #sortElement = null;
+  #filterModel = null;
 
   #offers = [];
   #destinations = [];
@@ -19,23 +21,29 @@ export default class TripPresenter {
   #routePointPresenters = new Map();
   #currentSortType = SortType.DAY;
 
-  constructor({container, pointsModel}) {
+  constructor({container, pointsModel, filterModel}) {
     this.#container = container;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
+    const filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[filterType](points);
+
     switch (this.#currentSortType) {
       case SortType.DAY:
-        return [...this.#pointsModel.points].sort(sortPointDay);
+        return filteredPoints.sort(sortPointDay);
       case SortType.TIME:
-        return [...this.#pointsModel.points].sort(sortPointTime);
+        return filteredPoints.sort(sortPointTime);
       case SortType.PRICE:
-        return [...this.#pointsModel.points].sort(sortPointPrice);
+        return filteredPoints.sort(sortPointPrice);
     }
-    return this.#pointsModel.points;
+    return filteredPoints;
   }
 
   init() {
