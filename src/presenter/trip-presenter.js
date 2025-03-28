@@ -23,7 +23,7 @@ export default class TripPresenter {
     this.#container = container;
     this.#pointsModel = pointsModel;
 
-    this.#pointsModel.addObserver(this.#handleModeEvent);
+    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
@@ -61,7 +61,7 @@ export default class TripPresenter {
     }
   };
 
-  #handleModeEvent = (updateType, data) => {
+  #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#routePointPresenters.get(data.id).init(data);
