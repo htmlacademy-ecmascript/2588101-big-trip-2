@@ -1,9 +1,17 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {POINT_TYPES} from '../const.js';
+import {POINT_TYPES, NEW_EVENT} from '../const.js';
 import {firstLetterCap} from '../utils/common.js';
 import {humanizeDateTime} from '../utils/point.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+
+function createPicturesTemplate(destination) {
+  return `<div class="event__photos-container">
+  <div class="event__photos-tape">
+    ${destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('')}
+  </div>
+</div>`;
+}
 
 function createDestinationListTemplate(destinations) {
   return (destinations.map((destination) => `<option value="${destination.name}"></option>`).join(''));
@@ -49,14 +57,15 @@ function createPointTypeTemplate(type) {
   )).join(''));
 }
 
-function createEditFormTemplate(point, offers, destinations) {
+function createFormTemplate(point, newEvent, offers, destinations) {
   const {basePrice, type, dateFrom, dateTo} = point;
   const pointDestination = destinations.find((dest) => dest.id === point.destination);
-  const {description, name} = pointDestination;
+  const {description, name, pictures} = pointDestination;
 
   const pointTypeTemplate = createPointTypeTemplate(type);
   const typeOfferTemplate = createTypeOfferTemplate(point, offers);
   const destinationListTemplate = createDestinationListTemplate(destinations);
+  const picturesTemplate = createPicturesTemplate(pointDestination);
 
   const humanizedTimeFrom = humanizeDateTime(dateFrom);
   const humanizedTimeTo = humanizeDateTime(dateTo);
@@ -106,15 +115,16 @@ function createEditFormTemplate(point, offers, destinations) {
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
-                  <button class="event__rollup-btn" type="button">
+                  <button class="event__reset-btn" type="reset">${newEvent ? 'Cancel' : 'Delete'}</button>
+                  ${!newEvent ? `<button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
-                  </button>
+                  </button>` : ''}
                 </header>
                     ${typeOfferTemplate}
                   <section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${description}</p>
+                    ${pictures.length ? picturesTemplate : ''}
                   </section>
                 </section>
               </form>
@@ -122,7 +132,7 @@ function createEditFormTemplate(point, offers, destinations) {
 }
 
 export default class EditFormView extends AbstractStatefulView {
-  #point = null;
+  #newEvent = null;
   #offers = null;
   #destinations = null;
   #rollupBtnClick = null;
@@ -131,9 +141,11 @@ export default class EditFormView extends AbstractStatefulView {
   #datepickerFrom = null;
   #datepickerTo = null;
 
-  constructor({point, offers, destinations, onRollupBtnClick, onFormSubmit, onDeleteClick}) {
+
+  constructor({point = NEW_EVENT, newEvent, offers, destinations, onRollupBtnClick, onFormSubmit, onDeleteClick}) {
     super();
     this._setState(EditFormView.parsePointToState(point));
+    this.#newEvent = newEvent;
     this.#offers = offers;
     this.#destinations = destinations;
 
@@ -145,7 +157,7 @@ export default class EditFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEditFormTemplate(this._state, this.#offers, this.#destinations);
+    return createFormTemplate(this._state, this.#newEvent, this.#offers, this.#destinations);
   }
 
   removeElement() {
@@ -169,7 +181,9 @@ export default class EditFormView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupBtnHandler);
+    if (!this.#newEvent) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupBtnHandler);
+    }
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeHandler);
