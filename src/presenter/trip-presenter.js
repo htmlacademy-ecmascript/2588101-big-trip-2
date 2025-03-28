@@ -3,7 +3,7 @@ import RoutePointListView from '../view/route-point-list-view.js';
 import NoRoutePointView from '../view/no-route-point-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import {render, RenderPosition, remove} from '../framework/render.js';
-import {SortType, UserAction, UpdateType} from '../const.js';
+import {SortType, UserAction, UpdateType, FilterType} from '../const.js';
 import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/point.js';
 import {filter} from '../utils/filter.js';
 
@@ -12,14 +12,15 @@ export default class TripPresenter {
   #pointsModel = null;
   #sortElement = null;
   #filterModel = null;
+  #noRoutePointElement = null;
 
   #offers = [];
   #destinations = [];
 
   #pointListElement = new RoutePointListView();
-  #noRoutePointElement = new NoRoutePointView();
   #routePointPresenters = new Map();
   #currentSortType = SortType.DAY;
+  #filterType = FilterType.EVERYTHING;
 
   constructor({container, pointsModel, filterModel}) {
     this.#container = container;
@@ -31,9 +32,9 @@ export default class TripPresenter {
   }
 
   get points() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = filter[filterType](points);
+    const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
       case SortType.DAY:
@@ -119,6 +120,10 @@ export default class TripPresenter {
   }
 
   #renderNoRoutePoints() {
+    this.#noRoutePointElement = new NoRoutePointView({
+      filterType: this.#filterType
+    });
+
     render(this.#noRoutePointElement, this.#container, RenderPosition.AFTERBEGIN);
   }
 
