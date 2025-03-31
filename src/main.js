@@ -1,5 +1,6 @@
 import HeaderInfoView from './view/header-info-view.js';
-import {render} from './framework/render.js';
+import NewEventButtonView from './view/new-event-button-view.js';
+import {render, RenderPosition} from './framework/render.js';
 import TripPresenter from './presenter/trip-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
@@ -15,7 +16,8 @@ const filterModel = new FilterModel();
 const tripPresenter = new TripPresenter({
   container: tripEventsContainer,
   pointsModel,
-  filterModel
+  filterModel,
+  onNewEventDestroy: handleNewEventFormClose
 });
 
 const filterPresenter = new FilterPresenter({
@@ -24,7 +26,21 @@ const filterPresenter = new FilterPresenter({
   pointsModel
 });
 
-render (new HeaderInfoView(), headerContainer, 'afterbegin');
+const newEventButtonElement = new NewEventButtonView({
+  onClick: handleNewEventButtonClick
+});
+
+function handleNewEventFormClose() {
+  // newEventButtonElement.element.disabled = false;
+}
+
+function handleNewEventButtonClick() {
+  tripPresenter.createEvent();
+  // newEventButtonElement.element.disabled = true;
+}
+
+render(newEventButtonElement, headerContainer);
+render (new HeaderInfoView(), headerContainer, RenderPosition.AFTERBEGIN);
 
 tripPresenter.init();
 filterPresenter.init();

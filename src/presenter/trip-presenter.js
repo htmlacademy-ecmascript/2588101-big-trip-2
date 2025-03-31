@@ -2,6 +2,7 @@ import SortView from '../view/sort-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
 import NoRoutePointView from '../view/no-route-point-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
+import NewEventPresenter from './new-event-presenter.js';
 import {render, RenderPosition, remove} from '../framework/render.js';
 import {SortType, UserAction, UpdateType, FilterType} from '../const.js';
 import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/point.js';
@@ -13,6 +14,7 @@ export default class TripPresenter {
   #sortElement = null;
   #filterModel = null;
   #noRoutePointElement = null;
+  #newEventPresenter = null;
 
   #offers = [];
   #destinations = [];
@@ -22,10 +24,16 @@ export default class TripPresenter {
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
 
-  constructor({container, pointsModel, filterModel}) {
+  constructor({container, pointsModel, filterModel, onNewEventDestroy}) {
     this.#container = container;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+
+    this.#newEventPresenter = new NewEventPresenter({
+      pointListContainer: this.#pointListElement.element,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewEventDestroy
+    });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -51,8 +59,14 @@ export default class TripPresenter {
     this.#renderTripBoard();
   }
 
+  createEvent() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newEventPresenter.init(this.#pointsModel);
+  }
 
   #handleModeChange = () => {
+    this.#newEventPresenter.destroy();
     this.#routePointPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -128,6 +142,7 @@ export default class TripPresenter {
   }
 
   #clearTripBoard({resetSortType = false} = {}) {
+    this.#newEventPresenter.destroy();
     this.#routePointPresenters.forEach((presenter) => presenter.destroy());
     this.#routePointPresenters.clear();
 

@@ -42,6 +42,7 @@ export default class RoutePointPresenter {
     });
 
     this.#editFormElement = new EditFormView({
+      newEvent: false,
       point: this.#point,
       offers: this.#offers,
       destinations: this.#destinations,
