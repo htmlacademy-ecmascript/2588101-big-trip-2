@@ -5,12 +5,17 @@ import TripPresenter from './presenter/trip-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
+import PointsApiService from './points-api-service.js';
+import {END_POINT, AUTHORIZATION} from './const.js';
 
 const headerContainer = document.querySelector('.trip-main');
 const filtersContainer = headerContainer.querySelector('.trip-controls__filters');
 const tripEventsContainer = document.querySelector('.trip-events');
 
-const pointsModel = new PointsModel();
+const pointsModel = new PointsModel({
+  pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
+});
+
 const filterModel = new FilterModel();
 
 const tripPresenter = new TripPresenter({
