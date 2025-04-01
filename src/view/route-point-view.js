@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeDate, getTimeDifference, humanizeTime} from '../utils/point.js';
+import he from 'he';
 
 function createRoutePointTemplate(point, offers, destinations) {
   const {basePrice, type, dateFrom, dateTo, isFavorite} = point;
@@ -21,7 +22,7 @@ function createRoutePointTemplate(point, offers, destinations) {
                 <div class="event__type">
                   <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
                 </div>
-                <h3 class="event__title">${type} ${pointDestination.name}</h3>
+                <h3 class="event__title">${type} ${he.encode(pointDestination?.name)}</h3>
                 <div class="event__schedule">
                   <p class="event__time">
                     <time class="event__start-time" datetime="2019-03-18T10:30">${poinTimeFrom}</time>

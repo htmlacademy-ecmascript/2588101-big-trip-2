@@ -1,6 +1,7 @@
 import EditFormView from '../view/edit-form-view.js';
 import RoutePointView from '../view/route-point-view.js';
 import {render, replace, remove} from '../framework/render.js';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -41,11 +42,13 @@ export default class RoutePointPresenter {
     });
 
     this.#editFormElement = new EditFormView({
+      newEvent: false,
       point: this.#point,
       offers: this.#offers,
       destinations: this.#destinations,
       onRollupBtnClick: this.#rollupBtnClick,
       onFormSubmit: this.#handleFormSubmit,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (prevRoutePointElement === null || prevEditFormElement === null) {
@@ -108,11 +111,27 @@ export default class RoutePointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite},
+    );
   };
 
   #handleFormSubmit = (point) => {
-    this.#handleDataChange(point);
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
     this.#replaceEditFormToRoutePoint();
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 }
