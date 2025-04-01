@@ -116,7 +116,7 @@ export default class TripPresenter {
       onSortTypeChange: this.#handleSortTypeChange
     });
 
-    render(this.#sortElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
+    render(this.#sortElement, this.#pointListElement.element, RenderPosition.BEFOREBEGIN);
   }
 
   #renderRoutePoint(point) {

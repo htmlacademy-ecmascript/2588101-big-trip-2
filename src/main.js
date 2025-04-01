@@ -31,12 +31,12 @@ const newEventButtonElement = new NewEventButtonView({
 });
 
 function handleNewEventFormClose() {
-  // newEventButtonElement.element.disabled = false;
+  newEventButtonElement.element.disabled = false;
 }
 
 function handleNewEventButtonClick() {
   tripPresenter.createEvent();
-  // newEventButtonElement.element.disabled = true;
+  newEventButtonElement.element.disabled = true;
 }
 
 render(newEventButtonElement, headerContainer);

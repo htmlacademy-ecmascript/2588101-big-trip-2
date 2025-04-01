@@ -8,7 +8,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 function createPicturesTemplate(destination) {
   return `<div class="event__photos-container">
   <div class="event__photos-tape">
-    ${destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('')}
+    ${destination?.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('')}
   </div>
 </div>`;
 }
@@ -60,7 +60,6 @@ function createPointTypeTemplate(type) {
 function createFormTemplate(point, newEvent, offers, destinations) {
   const {basePrice, type, dateFrom, dateTo} = point;
   const pointDestination = destinations.find((dest) => dest.id === point.destination);
-  const {description, name, pictures} = pointDestination;
 
   const pointTypeTemplate = createPointTypeTemplate(type);
   const typeOfferTemplate = createTypeOfferTemplate(point, offers);
@@ -92,7 +91,7 @@ function createFormTemplate(point, newEvent, offers, destinations) {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination?.name ?? ''}" list="destination-list-1" required>
                     <datalist id="destination-list-1">
                       ${destinationListTemplate}
                     </datalist>
@@ -100,10 +99,10 @@ function createFormTemplate(point, newEvent, offers, destinations) {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizedTimeFrom}">
+                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizedTimeFrom}" required>
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizedTimeTo}">
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizedTimeTo}" required>
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -111,7 +110,7 @@ function createFormTemplate(point, newEvent, offers, destinations) {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" min="1" max="100000" step="1" value="${basePrice}" required>
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -121,11 +120,11 @@ function createFormTemplate(point, newEvent, offers, destinations) {
                   </button>` : ''}
                 </header>
                     ${typeOfferTemplate}
-                  <section class="event__section  event__section--destination">
-                    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                    <p class="event__destination-description">${description}</p>
-                    ${pictures.length ? picturesTemplate : ''}
-                  </section>
+              ${pointDestination ? `<section class="event__section  event__section--destination">
+                <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                <p class="event__destination-description">${pointDestination.description}</p>
+                ${pointDestination.pictures.length ? picturesTemplate : ''}
+              </section>` : ''}
                 </section>
               </form>
             </li>`);
@@ -240,7 +239,7 @@ export default class EditFormView extends AbstractStatefulView {
   #pointPriceHandler = (evt) => {
     evt.preventDefault();
     this._setState({
-      basePrice: evt.target.value
+      basePrice: parseInt(evt.target.value, 10),
     });
   };
 
