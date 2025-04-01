@@ -38,4 +38,21 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export {POINT_COUNT, POINT_TYPES, FilterType, SortType, UserAction, UpdateType, NEW_EVENT};
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+const NoPointsTextType = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.PAST]: 'There are no past events now',
+};
+
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+};
+
+export {POINT_COUNT, POINT_TYPES, FilterType, SortType, UserAction, UpdateType, NEW_EVENT, Mode, NoPointsTextType, Method};
