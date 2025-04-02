@@ -1,6 +1,7 @@
 import SortView from '../view/sort-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
 import NoRoutePointView from '../view/no-route-point-view.js';
+import LoadingView from '../view/loading-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
 import {render, RenderPosition, remove} from '../framework/render.js';
@@ -20,9 +21,12 @@ export default class TripPresenter {
   #destinations = [];
 
   #pointListElement = new RoutePointListView();
+  #loadingElement = new LoadingView();
   #routePointPresenters = new Map();
+
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
   constructor({container, pointsModel, filterModel, onNewEventDestroy}) {
     this.#container = container;
@@ -97,6 +101,11 @@ export default class TripPresenter {
         this.#clearTripBoard({resetSortType: true});
         this.#renderTripBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingElement);
+        this.#renderTripBoard();
+        break;
     }
   };
 
@@ -133,6 +142,10 @@ export default class TripPresenter {
     points.forEach((point) => this.#renderRoutePoint(point));
   }
 
+  #renderLoading() {
+    render(this.#loadingElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderNoRoutePoints() {
     this.#noRoutePointElement = new NoRoutePointView({
       filterType: this.#filterType
@@ -147,6 +160,7 @@ export default class TripPresenter {
     this.#routePointPresenters.clear();
 
     remove(this.#sortElement);
+    remove(this.#loadingElement);
 
     if (this.#noRoutePointElement) {
       remove(this.#noRoutePointElement);
@@ -158,6 +172,13 @@ export default class TripPresenter {
   }
 
   #renderTripBoard() {
+    render(this.#pointListElement, this.#container);
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     this.#offers = this.#pointsModel.offers;
     this.#destinations = this.#pointsModel.destinations;
 
@@ -170,7 +191,6 @@ export default class TripPresenter {
     }
 
     this.#renderSort();
-    render(this.#pointListElement, this.#container);
     this.#renderRoutePoints(points);
   }
 }
