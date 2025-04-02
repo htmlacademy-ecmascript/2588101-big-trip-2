@@ -44,9 +44,11 @@ function handleNewEventButtonClick() {
   newEventButtonElement.element.disabled = true;
 }
 
-render(newEventButtonElement, headerContainer);
 render (new HeaderInfoView(), headerContainer, RenderPosition.AFTERBEGIN);
 
 tripPresenter.init();
 filterPresenter.init();
-pointsModel.init();
+pointsModel.init()
+  .finally(() => {
+    render(newEventButtonElement, headerContainer);
+  });
