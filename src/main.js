@@ -49,3 +49,4 @@ render (new HeaderInfoView(), headerContainer, RenderPosition.AFTERBEGIN);
 
 tripPresenter.init();
 filterPresenter.init();
+pointsModel.init();

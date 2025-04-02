@@ -1,5 +1,3 @@
-const POINT_COUNT = 5;
-
 const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
 
 const AUTHORIZATION = 'Basic er883jdfkdl';
@@ -59,4 +57,4 @@ const Method = {
   PUT: 'PUT',
 };
 
-export {POINT_COUNT, POINT_TYPES, FilterType, SortType, UserAction, UpdateType, NEW_EVENT, Mode, NoPointsTextType, Method, END_POINT, AUTHORIZATION};
+export {POINT_TYPES, FilterType, SortType, UserAction, UpdateType, NEW_EVENT, Mode, NoPointsTextType, Method, END_POINT, AUTHORIZATION};
