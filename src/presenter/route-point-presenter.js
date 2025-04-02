@@ -1,12 +1,7 @@
 import EditFormView from '../view/edit-form-view.js';
 import RoutePointView from '../view/route-point-view.js';
 import {render, replace, remove} from '../framework/render.js';
-import {UserAction, UpdateType} from '../const.js';
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
+import {UserAction, UpdateType, Mode} from '../const.js';
 
 export default class RoutePointPresenter {
   #container = null;

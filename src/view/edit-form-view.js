@@ -264,7 +264,6 @@ export default class EditFormView extends AbstractStatefulView {
       minuteIncrement: 1,
       enableTime: true,
       altInput: true,
-      dateFormat: 'Z',
       altFormat: 'd/m/y H:i',
       'time_24hr': true
     };

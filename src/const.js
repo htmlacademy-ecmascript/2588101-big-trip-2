@@ -1,4 +1,6 @@
-const POINT_COUNT = 5;
+const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
+
+const AUTHORIZATION = 'Basic er883jdfkdl';
 
 const POINT_TYPES = ['taxi','bus','train','ship','drive','flight','check-in','sightseeing','restaurant'];
 
@@ -36,6 +38,24 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
-export {POINT_COUNT, POINT_TYPES, FilterType, SortType, UserAction, UpdateType, NEW_EVENT};
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+const NoPointsTextType = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.PAST]: 'There are no past events now',
+};
+
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+};
+
+export {POINT_TYPES, FilterType, SortType, UserAction, UpdateType, NEW_EVENT, Mode, NoPointsTextType, Method, END_POINT, AUTHORIZATION};
