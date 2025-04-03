@@ -5,9 +5,10 @@ import LoadingView from '../view/loading-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
 import {render, RenderPosition, remove} from '../framework/render.js';
-import {SortType, UserAction, UpdateType, FilterType} from '../const.js';
+import {SortType, UserAction, UpdateType, FilterType, TimeLimit} from '../const.js';
 import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/point.js';
 import {filter} from '../utils/filter.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 export default class TripPresenter {
   #container = null;
@@ -23,6 +24,10 @@ export default class TripPresenter {
   #pointListElement = new RoutePointListView();
   #loadingElement = new LoadingView();
   #routePointPresenters = new Map();
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
@@ -75,6 +80,8 @@ export default class TripPresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#routePointPresenters.get(update.id).setSaving();
@@ -101,6 +108,8 @@ export default class TripPresenter {
         }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
