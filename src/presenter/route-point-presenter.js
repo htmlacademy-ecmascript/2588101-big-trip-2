@@ -94,6 +94,23 @@ export default class RoutePointPresenter {
     }
   }
 
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#routePointElement.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#editFormElement.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#editFormElement.shake(resetFormState);
+  }
+
   #replaceRoutePointToEditForm() {
     replace(this.#editFormElement, this.#routePointElement);
     document.addEventListener('keydown', this.#escKeyDownHandler);
