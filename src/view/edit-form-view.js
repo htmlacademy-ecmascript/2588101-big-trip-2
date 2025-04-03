@@ -59,7 +59,7 @@ function createPointTypeTemplate(type) {
 }
 
 function createFormTemplate(point, newEvent, offers, destinations) {
-  const {basePrice, type, dateFrom, dateTo} = point;
+  const {basePrice, type, dateFrom, dateTo, isDisabled, isSaving, isDeleting} = point;
   const pointDestination = destinations.find((dest) => dest.id === point.destination);
 
   const pointTypeTemplate = createPointTypeTemplate(type);
@@ -69,6 +69,8 @@ function createFormTemplate(point, newEvent, offers, destinations) {
 
   const humanizedTimeFrom = humanizeDateTime(dateFrom);
   const humanizedTimeTo = humanizeDateTime(dateTo);
+
+  const isSubmitDisabled = (dateFrom === null || dateTo === null);
 
   return (`<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -92,7 +94,7 @@ function createFormTemplate(point, newEvent, offers, destinations) {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(pointDestination?.name ?? '')}" list="destination-list-1" required>
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" ${isDisabled ? 'disabled' : ''} value="${he.encode(pointDestination?.name ?? '')}" list="destination-list-1" required>
                     <datalist id="destination-list-1">
                       ${destinationListTemplate}
                     </datalist>
@@ -100,10 +102,10 @@ function createFormTemplate(point, newEvent, offers, destinations) {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizedTimeFrom}" required>
+                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" ${isDisabled ? 'disabled' : ''} value="${humanizedTimeFrom}" required>
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizedTimeTo}" required>
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" ${isDisabled ? 'disabled' : ''} value="${humanizedTimeTo}" required>
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -114,8 +116,8 @@ function createFormTemplate(point, newEvent, offers, destinations) {
                     <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" min="1" max="100000" step="1" value="${basePrice}" required>
                   </div>
 
-                  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">${newEvent ? 'Cancel' : 'Delete'}</button>
+                  <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled || isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+                  <button class="event__reset-btn" type="reset">${(newEvent ? 'Cancel' : 'Delete') || (isDeleting ? 'Deleting...' : 'Delete')}</button>
                   ${!newEvent ? `<button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>` : ''}
@@ -290,11 +292,20 @@ export default class EditFormView extends AbstractStatefulView {
   }
 
   static parsePointToState(point) {
-    return {...point};
+    return {...point,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
   }
 
   static parseStateToPoint(state) {
     const point = {...state};
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
     return point;
   }
 }
