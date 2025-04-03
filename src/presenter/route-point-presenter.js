@@ -56,7 +56,8 @@ export default class RoutePointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#editFormElement, prevEditFormElement);
+      replace(this.#routePointElement, prevEditFormElement);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevRoutePointElement);
@@ -72,6 +73,24 @@ export default class RoutePointPresenter {
     if (this.#mode !== Mode.DEFAULT) {
       this.#editFormElement.reset(this.#point);
       this.#replaceEditFormToRoutePoint();
+    }
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editFormElement.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editFormElement.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
     }
   }
 
@@ -119,7 +138,6 @@ export default class RoutePointPresenter {
       UpdateType.MINOR,
       point,
     );
-    this.#replaceEditFormToRoutePoint();
   };
 
   #handleDeleteClick = (point) => {
