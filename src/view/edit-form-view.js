@@ -247,14 +247,14 @@ export default class EditFormView extends AbstractStatefulView {
   };
 
   #dateFromHandler = ([dateFrom]) => {
-    this._setState({
+    this.updateElement({
       dateFrom: dateFrom,
     });
     this.#datepickerTo.set('minDate', dateFrom);
   };
 
   #dateToHandler = ([dateTo]) => {
-    this._setState({
+    this.updateElement({
       dateTo: dateTo,
     });
     this.#datepickerFrom.set('maxDate', dateTo);
