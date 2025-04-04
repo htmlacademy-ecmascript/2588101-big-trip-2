@@ -4,8 +4,12 @@ const AUTHORIZATION = 'Basic er883jdfkdl';
 
 const POINT_TYPES = ['taxi','bus','train','ship','drive','flight','check-in','sightseeing','restaurant'];
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 const NEW_EVENT = {
-  'id': '01',
   'basePrice': 0,
   'dateFrom': null,
   'dateTo': null,
@@ -56,6 +60,8 @@ const NoPointsTextType = {
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
-export {POINT_TYPES, FilterType, SortType, UserAction, UpdateType, NEW_EVENT, Mode, NoPointsTextType, Method, END_POINT, AUTHORIZATION};
+export {POINT_TYPES, FilterType, SortType, UserAction, UpdateType, NEW_EVENT, Mode, NoPointsTextType, Method, END_POINT, AUTHORIZATION, TimeLimit};
