@@ -123,7 +123,7 @@ function createFormTemplate(point, newEvent, offers, destinations) {
                   </button>` : ''}
                 </header>
                     ${typeOfferTemplate}
-              ${pointDestination ? `<section class="event__section  event__section--destination">
+              ${pointDestination?.description.length || pointDestination?.pictures.length ? `<section class="event__section  event__section--destination">
                 <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                 <p class="event__destination-description">${pointDestination.description}</p>
                 ${pointDestination.pictures.length ? picturesTemplate : ''}
