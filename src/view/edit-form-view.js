@@ -116,8 +116,8 @@ function createFormTemplate(point, newEvent, offers, destinations) {
                     <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" min="1" max="100000" step="1" value="${basePrice}" required>
                   </div>
 
-                  <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled || isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
-                  <button class="event__reset-btn" type="reset">${(newEvent ? 'Cancel' : 'Delete') || (isDeleting ? 'Deleting...' : 'Delete')}</button>
+                  <button class="event__save-btn  btn  btn--blue" type="submit" ${(isSubmitDisabled || isDisabled) ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+                  <button class="event__reset-btn" type="reset">${(newEvent ? 'Cancel' : null) || (isDeleting ? 'Deleting...' : 'Delete')}</button>
                   ${!newEvent ? `<button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>` : ''}
