@@ -1,6 +1,7 @@
 import SortView from '../view/sort-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
 import NoRoutePointView from '../view/no-route-point-view.js';
+import FailedLoadDataView from '../view/failed-load-data-view.js';
 import LoadingView from '../view/loading-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
@@ -18,11 +19,13 @@ export default class TripPresenter {
   #noRoutePointElement = null;
   #newEventPresenter = null;
 
+
   #offers = [];
   #destinations = [];
 
   #pointListElement = new RoutePointListView();
   #loadingElement = new LoadingView();
+  #failedLoadDataElement = new FailedLoadDataView();
   #routePointPresenters = new Map();
   #uiBlocker = new UiBlocker({
     lowerLimit: TimeLimit.LOWER_LIMIT,
@@ -32,6 +35,7 @@ export default class TripPresenter {
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
+  #isError = false;
 
   constructor({container, pointsModel, filterModel, onNewEventDestroy}) {
     this.#container = container;
@@ -130,6 +134,12 @@ export default class TripPresenter {
         remove(this.#loadingElement);
         this.#renderTripBoard();
         break;
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        this.#isError = true;
+        remove(this.#loadingElement);
+        this.#renderTripBoard();
+        break;
     }
   };
 
@@ -170,6 +180,10 @@ export default class TripPresenter {
     render(this.#loadingElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
   }
 
+  #renderFailedLoadData() {
+    render(this.#failedLoadDataElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderNoRoutePoints() {
     this.#noRoutePointElement = new NoRoutePointView({
       filterType: this.#filterType
@@ -185,6 +199,7 @@ export default class TripPresenter {
 
     remove(this.#sortElement);
     remove(this.#loadingElement);
+    remove(this.#failedLoadDataElement);
 
     if (this.#noRoutePointElement) {
       remove(this.#noRoutePointElement);
@@ -197,6 +212,11 @@ export default class TripPresenter {
 
   #renderTripBoard() {
     render(this.#pointListElement, this.#container);
+
+    if (this.#isError) {
+      this.#renderFailedLoadData();
+      return;
+    }
 
     if (this.#isLoading) {
       this.#renderLoading();

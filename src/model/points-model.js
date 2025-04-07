@@ -31,6 +31,8 @@ export default class PointsModel extends Observable {
       this.#points = points.map(this.#adaptToClient);
     } catch(err) {
       this.#points = [];
+      this._notify(UpdateType.ERROR);
+      return;
     }
 
     try {
@@ -38,6 +40,8 @@ export default class PointsModel extends Observable {
       this.#offers = offers;
     } catch(err) {
       this.#offers = [];
+      this._notify(UpdateType.ERROR);
+      return;
     }
 
     try {
@@ -45,6 +49,8 @@ export default class PointsModel extends Observable {
       this.#destinations = destinations;
     } catch(err) {
       this.#destinations = [];
+      this._notify(UpdateType.ERROR);
+      return;
     }
 
     this._notify(UpdateType.INIT);
