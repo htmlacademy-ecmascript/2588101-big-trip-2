@@ -1,13 +1,15 @@
 import SortView from '../view/sort-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
 import NoRoutePointView from '../view/no-route-point-view.js';
+import FailedLoadDataView from '../view/failed-load-data-view.js';
 import LoadingView from '../view/loading-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
 import {render, RenderPosition, remove} from '../framework/render.js';
-import {SortType, UserAction, UpdateType, FilterType} from '../const.js';
+import {SortType, UserAction, UpdateType, FilterType, TimeLimit} from '../const.js';
 import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/point.js';
 import {filter} from '../utils/filter.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 export default class TripPresenter {
   #container = null;
@@ -17,26 +19,42 @@ export default class TripPresenter {
   #noRoutePointElement = null;
   #newEventPresenter = null;
 
+
   #offers = [];
   #destinations = [];
 
   #pointListElement = new RoutePointListView();
   #loadingElement = new LoadingView();
+  #failedLoadDataElement = new FailedLoadDataView();
   #routePointPresenters = new Map();
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
+  #isError = false;
 
   constructor({container, pointsModel, filterModel, onNewEventDestroy}) {
     this.#container = container;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
+    const renderNoPointsWithCondition = () => {
+      onNewEventDestroy();
+      const points = this.points;
+      const pointCount = points.length;
+      if (pointCount === 0) {
+        this.#renderNoRoutePoints();
+      }
+    };
+
     this.#newEventPresenter = new NewEventPresenter({
       pointListContainer: this.#pointListElement.element,
       onDataChange: this.#handleViewAction,
-      onDestroy: onNewEventDestroy
+      onDestroy: renderNoPointsWithCondition
     });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -67,6 +85,10 @@ export default class TripPresenter {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newEventPresenter.init(this.#pointsModel);
+
+    if (this.#noRoutePointElement) {
+      remove(this.#noRoutePointElement);
+    }
   }
 
   #handleModeChange = () => {
@@ -74,18 +96,37 @@ export default class TripPresenter {
     this.#routePointPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#routePointPresenters.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch(err) {
+          this.#routePointPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#newEventPresenter.setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch(err) {
+          this.#newEventPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#routePointPresenters.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch(err) {
+          this.#routePointPresenters.get(update.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -103,6 +144,12 @@ export default class TripPresenter {
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
+        remove(this.#loadingElement);
+        this.#renderTripBoard();
+        break;
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        this.#isError = true;
         remove(this.#loadingElement);
         this.#renderTripBoard();
         break;
@@ -146,6 +193,10 @@ export default class TripPresenter {
     render(this.#loadingElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
   }
 
+  #renderFailedLoadData() {
+    render(this.#failedLoadDataElement, this.#pointListElement.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderNoRoutePoints() {
     this.#noRoutePointElement = new NoRoutePointView({
       filterType: this.#filterType
@@ -161,6 +212,7 @@ export default class TripPresenter {
 
     remove(this.#sortElement);
     remove(this.#loadingElement);
+    remove(this.#failedLoadDataElement);
 
     if (this.#noRoutePointElement) {
       remove(this.#noRoutePointElement);
@@ -173,6 +225,11 @@ export default class TripPresenter {
 
   #renderTripBoard() {
     render(this.#pointListElement, this.#container);
+
+    if (this.#isError) {
+      this.#renderFailedLoadData();
+      return;
+    }
 
     if (this.#isLoading) {
       this.#renderLoading();

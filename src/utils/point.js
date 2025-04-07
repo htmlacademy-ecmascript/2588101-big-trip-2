@@ -28,9 +28,16 @@ function getTimeDifference(firstDate, secondDate) {
   const date2 = dayjs(secondDate);
   const difference = dayjs.duration(date1.diff(date2));
 
-  const format = 'DD[D] HH[H] mm[M]';
+  const normalFormat = 'DD[D] HH[H] mm[M]';
+  const format = 'HH[H] mm[M]';
+  const hoursMinutes = difference.format(format);
+  const days = parseInt(difference.asDays(),10);
 
-  return difference.format(format).replace(/\b00D 00H\b/, '').replace(/\b00D\b/, '');
+
+  const bigDate = `${days}D ${hoursMinutes}`.replace(/\b00D 00H\b/, '').replace(/\b00D\b/, '');
+  const normalDate = difference.format(normalFormat).replace(/\b00D 00H\b/, '').replace(/\b00D\b/, '');
+
+  return days > 30 ? bigDate : normalDate;
 }
 
 function isPointInFuture(pointDate) {
