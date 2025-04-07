@@ -265,8 +265,7 @@ export default class EditFormView extends AbstractStatefulView {
     const commonConfig = {
       minuteIncrement: 1,
       enableTime: true,
-      altInput: true,
-      altFormat: 'd/m/y H:i',
+      dateFormat: 'd/m/y H:i',
       'time_24hr': true
     };
 

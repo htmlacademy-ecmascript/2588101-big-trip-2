@@ -79,7 +79,7 @@ export default class RoutePointPresenter {
   setSaving() {
     if (this.#mode === Mode.EDITING) {
       this.#editFormElement.updateElement({
-        isDisabled: true,
+        isDisabled: false,
         isSaving: true,
       });
     }

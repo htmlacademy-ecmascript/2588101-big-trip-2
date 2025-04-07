@@ -42,10 +42,19 @@ export default class TripPresenter {
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
+    const renderNoPointsWithCondition = () => {
+      onNewEventDestroy();
+      const points = this.points;
+      const pointCount = points.length;
+      if (pointCount === 0) {
+        this.#renderNoRoutePoints();
+      }
+    };
+
     this.#newEventPresenter = new NewEventPresenter({
       pointListContainer: this.#pointListElement.element,
       onDataChange: this.#handleViewAction,
-      onDestroy: onNewEventDestroy
+      onDestroy: renderNoPointsWithCondition
     });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -76,6 +85,10 @@ export default class TripPresenter {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newEventPresenter.init(this.#pointsModel);
+
+    if (this.#noRoutePointElement) {
+      remove(this.#noRoutePointElement);
+    }
   }
 
   #handleModeChange = () => {
