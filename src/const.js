@@ -65,4 +65,16 @@ const Method = {
   DELETE: 'DELETE',
 };
 
-export {POINT_TYPES, FilterType, SortType, UserAction, UpdateType, NEW_EVENT, Mode, NoPointsTextType, Method, END_POINT, AUTHORIZATION, TimeLimit};
+export {
+  POINT_TYPES,
+  FilterType,
+  SortType,
+  UserAction,
+  UpdateType,
+  NEW_EVENT,
+  Mode,
+  NoPointsTextType,
+  Method,
+  END_POINT,
+  AUTHORIZATION,
+  TimeLimit};

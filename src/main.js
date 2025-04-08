@@ -1,6 +1,6 @@
-import HeaderInfoView from './view/header-info-view.js';
 import NewEventButtonView from './view/new-event-button-view.js';
 import {render, RenderPosition} from './framework/render.js';
+import HeaderPresenter from './presenter/header-presenter.js';
 import TripPresenter from './presenter/trip-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
@@ -17,6 +17,11 @@ const pointsModel = new PointsModel({
 });
 
 const filterModel = new FilterModel();
+
+const headerPresenter = new HeaderPresenter({
+  headerContainer: headerContainer,
+  pointsModel
+});
 
 const tripPresenter = new TripPresenter({
   container: tripEventsContainer,
@@ -44,8 +49,7 @@ function handleNewEventButtonClick() {
   newEventButtonElement.element.disabled = true;
 }
 
-render (new HeaderInfoView(), headerContainer, RenderPosition.AFTERBEGIN);
-
+headerPresenter.init();
 tripPresenter.init();
 filterPresenter.init();
 pointsModel.init()
