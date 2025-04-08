@@ -1,5 +1,5 @@
 import NewEventButtonView from './view/new-event-button-view.js';
-import {render, RenderPosition} from './framework/render.js';
+import {render} from './framework/render.js';
 import HeaderPresenter from './presenter/header-presenter.js';
 import TripPresenter from './presenter/trip-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
