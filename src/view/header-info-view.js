@@ -2,7 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import {sortPointDay} from '../utils/point.js';
 import dayjs from 'dayjs';
 
-function createNewTripInfoTemplate(pointsModel) {
+function createHeaderInfoTemplate(pointsModel) {
   if (!pointsModel.points.length) {
     return '<section class="trip-main__trip-info  trip-info"></section>';
   }
@@ -51,7 +51,7 @@ function createNewTripInfoTemplate(pointsModel) {
           </section>`;
 }
 
-export default class TripInfoView extends AbstractView {
+export default class HeaderInfoView extends AbstractView {
   #pointsModel = null;
 
   constructor(pointsModel) {
@@ -60,6 +60,6 @@ export default class TripInfoView extends AbstractView {
   }
 
   get template() {
-    return createNewTripInfoTemplate(this.#pointsModel);
+    return createHeaderInfoTemplate(this.#pointsModel);
   }
 }
