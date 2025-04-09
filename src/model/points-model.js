@@ -8,6 +8,8 @@ export default class PointsModel extends Observable {
   #offers = [];
   #destinations = [];
 
+  #isDataLoaded = false;
+
   constructor({pointsApiService}) {
     super();
     this.#pointsApiService = pointsApiService;
@@ -25,34 +27,28 @@ export default class PointsModel extends Observable {
     return this.#destinations;
   }
 
+  get isDataLoaded() {
+    return this.#isDataLoaded;
+  }
+
   async init() {
     try {
       const points = await this.#pointsApiService.points;
-      this.#points = points.map(this.#adaptToClient);
-    } catch(err) {
-      this.#points = [];
-      this._notify(UpdateType.ERROR);
-      return;
-    }
-
-    try {
       const offers = await this.#pointsApiService.offers;
-      this.#offers = offers;
-    } catch(err) {
-      this.#offers = [];
-      this._notify(UpdateType.ERROR);
-      return;
-    }
-
-    try {
       const destinations = await this.#pointsApiService.destinations;
+      this.#points = points.map(this.#adaptToClient);
+      this.#offers = offers;
       this.#destinations = destinations;
     } catch(err) {
+      this.#points = [];
+      this.#offers = [];
       this.#destinations = [];
       this._notify(UpdateType.ERROR);
+      this.#isDataLoaded = false;
       return;
     }
 
+    this.#isDataLoaded = true;
     this._notify(UpdateType.INIT);
   }
 
