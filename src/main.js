@@ -1,11 +1,11 @@
 import NewEventButtonView from './view/new-event-button-view.js';
-import {render} from './framework/render.js';
 import HeaderPresenter from './presenter/header-presenter.js';
 import TripPresenter from './presenter/trip-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import PointsApiService from './points-api-service.js';
+import {render} from './framework/render.js';
 import {END_POINT, AUTHORIZATION} from './const.js';
 
 const headerContainer = document.querySelector('.trip-main');
@@ -55,4 +55,8 @@ filterPresenter.init();
 pointsModel.init()
   .finally(() => {
     render(newEventButtonElement, headerContainer);
+
+    if (!pointsModel.isDataLoaded) {
+      newEventButtonElement.element.disabled = true;
+    }
   });
